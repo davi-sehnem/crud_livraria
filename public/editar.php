@@ -3,10 +3,20 @@
 include "../infra/conexao.php";
 
 $id = $_GET["id"];
-$sql = "SELECT * FROM livros WHERE id = $id";
-$resultado = mysqli_query($conexao, $sql );
 
-$livro =mysqli_fetch_assoc($resultado);
+$sql = "SELECT * FROM livros WHERE id = ?";
+
+$stmt = mysqli_prepare($conexao, $sql);
+
+mysqli_stmt_bind_param($stmt, "i", $id);
+
+mysqli_stmt_execute($stmt);
+
+$resultado = mysqli_stmt_get_result($stmt);
+
+$livro = mysqli_fetch_assoc($resultado);
+
+mysqli_stmt_close($stmt);
 
 ?>
 
@@ -21,31 +31,42 @@ $livro =mysqli_fetch_assoc($resultado);
 </head>
 
 <body>
+
     <header>
         <h1>CRUD - Livraria</h1>
     </header>
+
     <main>
-        <h2>Editando o livro <?php echo $livro["titulo"]?>!</h2>
+
+        <h2>Editando o livro <?php echo $livro["titulo"] ?>!</h2>
+
         <form action="atualizar.php" method="POST">
-            <input type="hidden" name="id" value="<?php echo $livro["id"]?>">
+
+            <input type="hidden" name="id" value="<?php echo $livro["id"] ?>">
 
             <label for="titulo">Título:</label>
-            <input type="text" name="titulo" value="<?php echo $livro["titulo"]?>">
+            <input type="text" name="titulo" value="<?php echo $livro["titulo"] ?>">
+
             <br>
+
             <label for="autor">Autor:</label>
-            <input type="text" name="autor" value="<?php echo $livro["autor"]?>">
+            <input type="text" name="autor" value="<?php echo $livro["autor"] ?>">
+
             <br>
+
             <label for="ano">Ano de Publicação:</label>
-            <input type="number" name="ano" value="<?php echo $livro["ano"]?>">
+            <input type="number" name="ano" value="<?php echo $livro["ano"] ?>">
+
             <br>
+
             <button type="submit">Atualizar</button>
+
         </form>
 
     </main>
+
     <footer>
-
     </footer>
-
 
 </body>
 
